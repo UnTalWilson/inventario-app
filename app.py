@@ -22,6 +22,10 @@ def crear_db():
         fecha TEXT
     )
     """)
+    try:
+        cursor.execute("ALTER TABLE productos ADD COLUMN fecha TEXT")
+    except:
+        pass
     conn.commit()
     conn.close()
 

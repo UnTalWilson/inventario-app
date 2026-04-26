@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)
+app.secret_key = "12345"
 
 # Crear base de datos
 def crear_db():
@@ -26,7 +27,20 @@ def crear_db():
     conn.close()
 
 crear_db()
+# LOGIN
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        usuario = request.form["usuario"]
+        password = request.form["password"]
 
+        if usuario == "admin" and password == "123":
+            session["admin"] = True
+            return redirect("/admin")
+        else:
+            return "Credenciales incorrectas"
+
+    return render_template("login.html")
 # BUSCAR PRODUCTO
 @app.route("/", methods=["GET", "POST"])
 def buscar():
@@ -54,6 +68,9 @@ def buscar():
 # PANEL ADMIN
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
+    if "admin" not in session:
+        return redirect("/login")
+
     if request.method == "POST":
         codigo = request.form["codigo"]
         nombre = request.form["nombre"]

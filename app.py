@@ -1,17 +1,21 @@
 from flask import Flask, render_template, request, redirect, session
-import sqlite3
+import psycopg2
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "12345"
 
+DATABASE_URL = "postgresql://inventario_db_i3fa_user:IOv3pW8g4v5NtGDSny4Z7cTl4RIfl2PL@dpg-d7n9hhf7f7vs73fl3r40-a/inventario_db_i3fa"
+
+def get_conn():
+    return psycopg2.connect(DATABASE_URL)
+
 def crear_db():
-    conn = sqlite3.connect("database.db")
+    conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute("DROP TABLE IF EXISTS productos")
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS productos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         codigo TEXT,
         nombre TEXT,
         talla TEXT,
@@ -23,32 +27,26 @@ def crear_db():
         fecha TEXT
     )
     """)
-    try:
-        cursor.execute("ALTER TABLE productos ADD COLUMN fecha TEXT")
-    except:
-        pass
     conn.commit()
     conn.close()
 
 crear_db()
 
-# BUSCAR PRODUCTO (público)
 @app.route("/", methods=["GET", "POST"])
 def buscar():
     producto = None
     if request.method == "POST":
         codigo = request.form["codigo"]
-        conn = sqlite3.connect("database.db")
+        conn = get_conn()
         cursor = conn.cursor()
         cursor.execute("""
         SELECT nombre, talla, color, stock, precio, ubicacion, imagen
-        FROM productos WHERE codigo = ?
+        FROM productos WHERE codigo = %s
         """, (codigo,))
         producto = cursor.fetchone()
         conn.close()
     return render_template("buscar.html", producto=producto)
 
-# LOGIN
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
@@ -62,18 +60,15 @@ def login():
             error = "Usuario o contraseña incorrectos"
     return render_template("login.html", error=error)
 
-# LOGOUT
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/login")
 
-# ADMIN (protegido)
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     if not session.get("admin"):
         return redirect("/login")
-    
     if request.method == "POST":
         codigo = request.form["codigo"]
         nombre = request.form["nombre"]
@@ -84,49 +79,44 @@ def admin():
         ubicacion = request.form["ubicacion"]
         imagen = request.form["imagen"]
         fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
-        conn = sqlite3.connect("database.db")
+        conn = get_conn()
         cursor = conn.cursor()
         cursor.execute("""
         INSERT INTO productos (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha))
         conn.commit()
         conn.close()
-
     return render_template("admin.html")
+
 @app.route("/admin/lista")
 def lista_productos():
     if not session.get("admin"):
         return redirect("/login")
-    
-    conn = sqlite3.connect("database.db")
+    conn = get_conn()
     cursor = conn.cursor()
     cursor.execute("SELECT id, codigo, nombre, talla, color, stock, precio, fecha FROM productos ORDER BY id DESC")
     productos = cursor.fetchall()
     conn.close()
-    
     return render_template("lista.html", productos=productos)
 
 @app.route("/admin/eliminar/<int:id>")
 def eliminar(id):
     if not session.get("admin"):
         return redirect("/login")
-    
-    conn = sqlite3.connect("database.db")
+    conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM productos WHERE id = ?", (id,))
+    cursor.execute("DELETE FROM productos WHERE id = %s", (id,))
     conn.commit()
     conn.close()
-    
     return redirect("/admin/lista")
+
 @app.route("/admin/editar/<int:id>", methods=["GET", "POST"])
 def editar(id):
     if not session.get("admin"):
         return redirect("/login")
-    
-    conn = sqlite3.connect("database.db")
+    conn = get_conn()
     cursor = conn.cursor()
-    
     if request.method == "POST":
         codigo = request.form["codigo"]
         nombre = request.form["nombre"]
@@ -136,18 +126,17 @@ def editar(id):
         precio = request.form["precio"]
         ubicacion = request.form["ubicacion"]
         imagen = request.form["imagen"]
-        
         cursor.execute("""
-        UPDATE productos SET codigo=?, nombre=?, talla=?, color=?, stock=?, precio=?, ubicacion=?, imagen=?
-        WHERE id=?
+        UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s, imagen=%s
+        WHERE id=%s
         """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, id))
         conn.commit()
         conn.close()
         return redirect("/admin/lista")
-    
-    cursor.execute("SELECT * FROM productos WHERE id=?", (id,))
+    cursor.execute("SELECT * FROM productos WHERE id=%s", (id,))
     producto = cursor.fetchone()
     conn.close()
     return render_template("editar.html", producto=producto)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

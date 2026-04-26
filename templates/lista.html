@@ -56,10 +56,10 @@
                 <td class="{% if p[5]|int > 5 %}stock-ok{% else %}stock-bajo{% endif %}">{{ p[5] }}</td>
                 <td>{{ p[6] }}</td>
                 <td>{{ p[7] }}</td>
-                <td>
-                    <a href="/admin/editar/{{ p[0] }}" style="background:#333; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none; margin-right:5px;">✏️ Editar</a>
-                    <a href="/admin/eliminar/{{ p[0] }}" class="btn-eliminar" onclick="return confirm('¿Eliminar este producto?')">🗑 Eliminar</a>
-</td>
+                <td style="white-space:nowrap;">
+                    <a href="/admin/editar/{{ p[0] }}" style="background:#333; color:white; padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none; display:inline-block; margin-bottom:4px;">✏️ Editar</a>
+                    <a href="/admin/eliminar/{{ p[0] }}" class="btn-eliminar" onclick="return confirm('¿Eliminar este producto?')" style="display:inline-block;">🗑 Eliminar</a>
+                </td>
             </tr>
             {% endfor %}
         </table>

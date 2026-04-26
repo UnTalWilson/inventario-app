@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "12345"
@@ -17,7 +18,8 @@ def crear_db():
         stock INTEGER,
         precio REAL,
         ubicacion TEXT,
-        imagen TEXT
+        imagen TEXT,
+        fecha TEXT
     )
     """)
     conn.commit()
@@ -76,17 +78,42 @@ def admin():
         precio = request.form["precio"]
         ubicacion = request.form["ubicacion"]
         imagen = request.form["imagen"]
-
+fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
         cursor.execute("""
-        INSERT INTO productos (codigo, nombre, talla, color, stock, precio, ubicacion, imagen)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen))
+       INSERT INTO productos (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha))
         conn.commit()
         conn.close()
 
     return render_template("admin.html")
+@app.route("/admin/lista")
+def lista_productos():
+    if not session.get("admin"):
+        return redirect("/login")
+    
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, codigo, nombre, talla, color, stock, fecha FROM productos ORDER BY id DESC")
+    productos = cursor.fetchall()
+    conn.close()
+    
+    return render_template("lista.html", productos=productos)
+
+@app.route("/admin/eliminar/<int:id>")
+def eliminar(id):
+    if not session.get("admin"):
+        return redirect("/login")
+    
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM productos WHERE id = ?", (id,))
+    conn.commit()
+    conn.close()
+    
+    return redirect("/admin/lista")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

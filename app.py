@@ -78,11 +78,11 @@ def admin():
         precio = request.form["precio"]
         ubicacion = request.form["ubicacion"]
         imagen = request.form["imagen"]
-fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
+        fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
         conn = sqlite3.connect("database.db")
         cursor = conn.cursor()
         cursor.execute("""
-       INSERT INTO productos (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha)
+        INSERT INTO productos (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha))
         conn.commit()

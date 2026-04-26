@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Inventario</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    padding: 15px;
+    background-color: #f5f5f5;
+}
+
+form {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input {
+    padding: 12px;
+    width: 90%;
+    max-width: 300px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 12px;
+    width: 95%;
+    max-width: 320px;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Buscar producto</h2>
+
+<form method="POST">
+    <input type="text" name="codigo" placeholder="Código">
+    <button type="submit">Buscar</button>
+</form>
+
+{% if producto %}
+    <h3>{{ producto[0] }}</h3>
+
+    {% if producto[6] %}
+        <img src="{{ url_for('static', filename='img/' + producto[6]) }}" width="200">
+    {% endif %}
+
+    <p>Talla: {{ producto[1] }}</p>
+    <p>Color: {{ producto[2] }}</p>
+    <p>Stock: {{ producto[3] }}</p>
+    <p>Precio: Bs {{ producto[4] }}</p>
+    <p>Ubicación: {{ producto[5] }}</p>
+
+{% elif producto is not none %}
+    <p style="color:red;">Producto no encontrado</p>
+{% endif %}
+
+</body>
+</html>

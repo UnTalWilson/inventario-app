@@ -101,7 +101,7 @@ def lista_productos():
     
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT id, codigo, nombre, talla, color, stock, fecha FROM productos ORDER BY id DESC")
+    cursor.execute("SELECT id, codigo, nombre, talla, color, stock, precio, fecha FROM productos ORDER BY id DESC")
     productos = cursor.fetchall()
     conn.close()
     

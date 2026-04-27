@@ -36,7 +36,7 @@
     {% if producto %}
     <div class="resultado">
         {% if producto[6] %}
-        <img src="{{ url_for('static', filename='img/' + producto[6]) }}" alt="Imagen">
+        <img src="{{ producto[6] }}" alt="Imagen">
         {% endif %}
         <div class="nombre">{{ producto[0] }}</div>
         <div class="fila"><span class="label">Talla</span><span class="valor">{{ producto[1] }}</span></div>

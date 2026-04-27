@@ -57,7 +57,8 @@ def crear_db():
     VALUES ('vendedor', '1234', 'vendedor')
     ON CONFLICT (usuario) DO NOTHING
     """)
-cursor.execute("""
+
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS ventas (
         id SERIAL PRIMARY KEY,
         codigo TEXT,

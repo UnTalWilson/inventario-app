@@ -21,6 +21,7 @@ def get_conn():
 def crear_db():
     conn = get_conn()
     cursor = conn.cursor()
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS productos (
         id SERIAL PRIMARY KEY,
@@ -35,6 +36,28 @@ def crear_db():
         fecha TEXT
     )
     """)
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id SERIAL PRIMARY KEY,
+        usuario TEXT UNIQUE,
+        password TEXT,
+        rol TEXT
+    )
+    """)
+
+    cursor.execute("""
+    INSERT INTO usuarios (usuario, password, rol)
+    VALUES ('admin', '1234', 'admin')
+    ON CONFLICT (usuario) DO NOTHING
+    """)
+
+    cursor.execute("""
+    INSERT INTO usuarios (usuario, password, rol)
+    VALUES ('vendedor', '1234', 'vendedor')
+    ON CONFLICT (usuario) DO NOTHING
+    """)
+
     conn.commit()
     conn.close()
 
@@ -61,9 +84,18 @@ def login():
     if request.method == "POST":
         usuario = request.form["usuario"]
         password = request.form["password"]
-        if usuario == "admin" and password == "1234":
-            session["admin"] = True
-            return redirect("/admin")
+        conn = get_conn()
+        cursor = conn.cursor()
+        cursor.execute("SELECT rol FROM usuarios WHERE usuario=%s AND password=%s", (usuario, password))
+        user = cursor.fetchone()
+        conn.close()
+        if user:
+            session["usuario"] = usuario
+            session["rol"] = user[0]
+            if user[0] == "admin":
+                return redirect("/inicio")
+            else:
+                return redirect("/inicio")
         else:
             error = "Usuario o contraseña incorrectos"
     return render_template("login.html", error=error)
@@ -73,9 +105,15 @@ def logout():
     session.clear()
     return redirect("/login")
 
+@app.route("/inicio")
+def inicio():
+    if not session.get("rol"):
+        return redirect("/login")
+    return render_template("inicio.html", rol=session["rol"])
+
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    if not session.get("admin"):
+    if session.get("rol") != "admin":
         return redirect("/login")
     if request.method == "POST":
         codigo = request.form["codigo"]
@@ -103,7 +141,7 @@ def admin():
 
 @app.route("/admin/lista")
 def lista_productos():
-    if not session.get("admin"):
+    if session.get("rol") != "admin":
         return redirect("/login")
     conn = get_conn()
     cursor = conn.cursor()
@@ -114,7 +152,7 @@ def lista_productos():
 
 @app.route("/admin/eliminar/<int:id>")
 def eliminar(id):
-    if not session.get("admin"):
+    if session.get("rol") != "admin":
         return redirect("/login")
     conn = get_conn()
     cursor = conn.cursor()
@@ -125,7 +163,7 @@ def eliminar(id):
 
 @app.route("/admin/editar/<int:id>", methods=["GET", "POST"])
 def editar(id):
-    if not session.get("admin"):
+    if session.get("rol") != "admin":
         return redirect("/login")
     conn = get_conn()
     cursor = conn.cursor()
@@ -142,7 +180,6 @@ def editar(id):
             archivo = request.files["imagen"]
             resultado = cloudinary.uploader.upload(archivo)
             imagen = resultado["secure_url"]
-        
         if imagen:
             cursor.execute("""
             UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s, imagen=%s

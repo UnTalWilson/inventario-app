@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial; background: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 15px; }
+        .logo { font-size: 28px; font-weight: bold; color: #222; margin-bottom: 10px; }
+        .usuario { font-size: 14px; color: #888; margin-bottom: 40px; }
+        .botones { width: 100%; max-width: 350px; display: flex; flex-direction: column; gap: 15px; }
+        .btn { display: block; padding: 20px; font-size: 18px; text-align: center; border-radius: 15px; text-decoration: none; font-weight: bold; }
+        .btn-buscar { background: #222; color: white; }
+        .btn-venta { background: #27ae60; color: white; }
+        .btn-compra { background: #2980b9; color: white; }
+        .btn-reportes { background: #8e44ad; color: white; }
+        .logout { margin-top: 30px; font-size: 14px; color: #aaa; text-decoration: none; }
+        .logout:hover { color: red; }
+    </style>
+</head>
+<body>
+    <div class="logo">📦 Inventario</div>
+    <div class="usuario">Hola, {{ session['usuario'] }} ({{ rol }})</div>
+
+    <div class="botones">
+        <a href="/" class="btn btn-buscar">🔍 Buscar producto</a>
+        <a href="/ventas" class="btn btn-venta">💰 Registrar venta</a>
+        {% if rol == "admin" %}
+        <a href="/admin" class="btn btn-compra">🛒 Agregar producto</a>
+        <a href="/reportes" class="btn btn-reportes">📊 Reportes</a>
+        {% endif %}
+    </div>
+
+    <a href="/logout" class="logout">Cerrar sesión</a>
+</body>
+</html>

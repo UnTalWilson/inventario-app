@@ -288,5 +288,8 @@ def reportes():
 
     conn.close()
     return render_template("reportes.html", resumen_hoy=resumen_hoy, ventas=ventas, stock_bajo=stock_bajo)
+@app.route("/sw.js")
+def sw():
+    return app.send_static_file("sw.js")
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

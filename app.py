@@ -227,7 +227,7 @@ def ventas():
             cursor.execute("SELECT nombre, stock, precio FROM productos WHERE codigo = %s", (codigo,))
             producto = cursor.fetchone()
             if not producto:
-                mensaje = "Producto no encontrado"
+                mensaje = "❌ Producto no encontrado"
 
         elif accion == "vender":
             cantidad_str = request.form.get("cantidad")
@@ -251,7 +251,7 @@ def ventas():
                 mensaje = f"Venta registrada — {cantidad} unidades de {producto[0]}"
                 producto = None
             else:
-                mensaje = "Stock insuficiente"
+                mensaje = "❌ Stock insuficiente"
 
         conn.close()
 

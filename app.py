@@ -256,6 +256,37 @@ def ventas():
         conn.close()
 
     return render_template("ventas.html", producto=producto, mensaje=mensaje)
+@app.route("/reportes")
+def reportes():
+    if session.get("rol") != "admin":
+        return redirect("/login")
 
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    # Total vendido hoy
+    hoy = datetime.now().strftime("%d/%m/%Y")
+    cursor.execute("""
+    SELECT COUNT(*), SUM(cantidad), SUM(total)
+    FROM ventas WHERE fecha LIKE %s
+    """, (hoy + "%",))
+    resumen_hoy = cursor.fetchone()
+
+    # Ultimas 20 ventas
+    cursor.execute("""
+    SELECT nombre, cantidad, precio, total, vendedor, fecha
+    FROM ventas ORDER BY id DESC LIMIT 20
+    """)
+    ventas = cursor.fetchall()
+
+    # Productos con stock bajo (menos de 5)
+    cursor.execute("""
+    SELECT codigo, nombre, stock
+    FROM productos WHERE stock < 5 ORDER BY stock ASC
+    """)
+    stock_bajo = cursor.fetchall()
+
+    conn.close()
+    return render_template("reportes.html", resumen_hoy=resumen_hoy, ventas=ventas, stock_bajo=stock_bajo)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

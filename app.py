@@ -57,7 +57,18 @@ def crear_db():
     VALUES ('vendedor', '1234', 'vendedor')
     ON CONFLICT (usuario) DO NOTHING
     """)
-
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS ventas (
+        id SERIAL PRIMARY KEY,
+        codigo TEXT,
+        nombre TEXT,
+        cantidad INTEGER,
+        precio REAL,
+        total REAL,
+        vendedor TEXT,
+        fecha TEXT
+    )
+    """)
     conn.commit()
     conn.close()
 
@@ -197,6 +208,48 @@ def editar(id):
     producto = cursor.fetchone()
     conn.close()
     return render_template("editar.html", producto=producto)
-
+@app.route("/ventas", methods=["GET", "POST"])
+def ventas():
+    if not session.get("rol"):
+        return redirect("/login")
+    
+    mensaje = None
+    producto = None
+    
+    if request.method == "POST":
+        accion = request.form.get("accion")
+        codigo = request.form.get("codigo")
+        
+        conn = get_conn()
+        cursor = conn.cursor()
+        
+        if accion == "buscar":
+            cursor.execute("SELECT nombre, stock, precio FROM productos WHERE codigo = %s", (codigo,))
+            producto = cursor.fetchone()
+            if not producto:
+                mensaje = "Producto no encontrado"
+        
+        elif accion == "vender":
+            cantidad = int(request.form.get("cantidad"))
+            cursor.execute("SELECT nombre, stock, precio FROM productos WHERE codigo = %s", (codigo,))
+            producto = cursor.fetchone()
+            
+            if producto and producto[1] >= cantidad:
+                total = cantidad * producto[2]
+                fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
+                cursor.execute("""
+                INSERT INTO ventas (codigo, nombre, cantidad, precio, total, vendedor, fecha)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (codigo, producto[0], cantidad, producto[2], total, session["usuario"], fecha))
+                cursor.execute("UPDATE productos SET stock = stock - %s WHERE codigo = %s", (cantidad, codigo))
+                conn.commit()
+                mensaje = f"✅ Venta registrada — {cantidad} unidades de {producto[0]}"
+                producto = None
+            else:
+                mensaje = "❌ Stock insuficiente"
+        
+        conn.close()
+    
+    return render_template("ventas.html", producto=producto, mensaje=mensaje)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

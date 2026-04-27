@@ -50,7 +50,7 @@
 
         <form method="POST" style="margin-top:15px;">
             <input type="hidden" name="codigo" value="{{ request.form.get('codigo') }}">
-            <input type="number" name="cantidad" placeholder="Cantidad a vender" min="1" max="{{ producto[1] }}">
+            <input type="number" name="cantidad" placeholder="Cantidad a vender" min="1" max="{{ producto[1] }}" required>
             <button type="submit" name="accion" value="vender" class="btn-vender">✅ Confirmar venta</button>
         </form>
     </div>

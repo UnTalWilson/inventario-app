@@ -230,7 +230,12 @@ def ventas():
                 mensaje = "Producto no encontrado"
 
         elif accion == "vender":
-            cantidad = int(request.form.get("cantidad"))
+            cantidad_str = request.form.get("cantidad")
+            if not cantidad_str:
+                mensaje = "❌ Ingresa una cantidad"
+                conn.close()
+                return render_template("ventas.html", producto=None, mensaje=mensaje)
+            cantidad = int(cantidad_str)
             cursor.execute("SELECT nombre, stock, precio FROM productos WHERE codigo = %s", (codigo,))
             producto = cursor.fetchone()
 

@@ -3,6 +3,13 @@
 <head>
     <title>Login Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#222222">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
     <style>
         body { font-family: Arial; text-align: center; padding: 30px; background: #f5f5f5; }
         form { background: white; padding: 30px; border-radius: 10px; max-width: 300px; margin: auto; }

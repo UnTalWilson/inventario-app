@@ -1,6 +1,14 @@
 from flask import Flask, render_template, request, redirect, session
 import psycopg2
 from datetime import datetime
+import cloudinary
+import cloudinary.uploader
+
+cloudinary.config(
+    cloud_name = "Root",
+    api_key = "844949396175941",
+    api_secret = "GQOSypE5teK1ZtXxokPOxP39ZVo"
+)
 
 app = Flask(__name__)
 app.secret_key = "12345"
@@ -77,8 +85,12 @@ def admin():
         stock = request.form["stock"]
         precio = request.form["precio"]
         ubicacion = request.form["ubicacion"]
-        imagen = request.form["imagen"]
         fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
+        imagen = ""
+        if "imagen" in request.files and request.files["imagen"].filename != "":
+            archivo = request.files["imagen"]
+            resultado = cloudinary.uploader.upload(archivo)
+            imagen = resultado["secure_url"]
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute("""
@@ -125,11 +137,22 @@ def editar(id):
         stock = request.form["stock"]
         precio = request.form["precio"]
         ubicacion = request.form["ubicacion"]
-        imagen = request.form["imagen"]
-        cursor.execute("""
-        UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s, imagen=%s
-        WHERE id=%s
-        """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, id))
+        imagen = None
+        if "imagen" in request.files and request.files["imagen"].filename != "":
+            archivo = request.files["imagen"]
+            resultado = cloudinary.uploader.upload(archivo)
+            imagen = resultado["secure_url"]
+        
+        if imagen:
+            cursor.execute("""
+            UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s, imagen=%s
+            WHERE id=%s
+            """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, id))
+        else:
+            cursor.execute("""
+            UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s
+            WHERE id=%s
+            """, (codigo, nombre, talla, color, stock, precio, ubicacion, id))
         conn.commit()
         conn.close()
         return redirect("/admin/lista")

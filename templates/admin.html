@@ -27,7 +27,7 @@
 
     <div class="card">
         <h3>Agregar producto</h3>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <input name="codigo" placeholder="Código *" required>
             <input name="nombre" placeholder="Nombre *" required>
             <input name="talla" placeholder="Talla">
@@ -35,7 +35,7 @@
             <input name="stock" placeholder="Stock" type="number">
             <input name="precio" placeholder="Precio (Bs)" type="number" step="0.01">
             <input name="ubicacion" placeholder="Ubicación en estante">
-            <input name="imagen" placeholder="Imagen (ej: TEST1.jpg)">
+            <input type="file" name="imagen" accept="image/*">
             <button type="submit">✅ Guardar producto</button>
             <a href="/admin/lista" style="display:block; text-align:center; margin-top:15px; color:#888; font-size:14px;">📋 Ver lista de productos</a>
         </form>

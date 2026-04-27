@@ -5,7 +5,7 @@ import cloudinary
 import cloudinary.uploader
 
 cloudinary.config(
-    cloud_name = "Root",
+    cloud_name = "dwgbi7glk",
     api_key = "844949396175941",
     api_secret = "GQOSypE5teK1ZtXxokPOxP39ZVo"
 )

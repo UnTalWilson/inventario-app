@@ -1,15 +1,15 @@
 {
   "name": "Inventario",
   "short_name": "Inventario",
-  "start_url": "/",
+  "start_url": "/inicio",
   "display": "standalone",
-  "background_color": "#f0f0f0",
-  "theme_color": "#222222",
+  "background_color": "#1a1a2e",
+  "theme_color": "#00d4ff",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dwgbi7glk/image/upload/v1777249598/tdbr940xnjgv0pegtj1f.jpg",
-      "sizes": "192x192",
-      "type": "image/jpeg"
+      "src": "/static/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ]
 }

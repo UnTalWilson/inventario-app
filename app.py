@@ -298,5 +298,25 @@ def reportes():
 @app.route("/sw.js")
 def sw():
     return app.send_static_file("sw.js")
+@app.route("/inventario")
+def inventario():
+    orden = request.args.get("orden", "nombre")
+    direccion = request.args.get("dir", "asc")
+    
+    columnas_validas = ["nombre", "codigo", "talla", "color", "stock", "precio", "fecha"]
+    if orden not in columnas_validas:
+        orden = "nombre"
+    
+    sql_dir = "ASC" if direccion == "asc" else "DESC"
+    
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute(f"""
+    SELECT codigo, nombre, talla, color, stock, precio, ubicacion, fecha
+    FROM productos ORDER BY {orden} {sql_dir}
+    """)
+    productos = cursor.fetchall()
+    conn.close()
+    return render_template("inventario.html", productos=productos, orden=orden, dir=direccion)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

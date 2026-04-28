@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventario Completo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .sort-link { color: rgba(255,255,255,0.9); text-decoration: none; display: flex; align-items: center; gap: 4px; }
+        .sort-link:hover { color: #00d4ff; }
+        .sort-active { color: #00d4ff; }
+    </style>
+</head>
+<body>
+    <div class="header" style="max-width:900px;">
+        <a href="/" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/" style="color:rgba(255,255,255,0.5); font-size:13px; text-decoration:none; padding:6px 14px; border:1px solid rgba(255,255,255,0.1); border-radius:8px;">← Volver</a>
+    </div>
+
+    <input type="text" class="search-input" id="buscador" placeholder="Filtrar por cualquier campo..." onkeyup="filtrar()" style="max-width:900px;">
+
+    <div class="tabla" style="max-width:900px;">
+        <table id="tablaInventario">
+            <tr>
+                <th><a href="/inventario?orden=codigo&dir={{ 'desc' if orden == 'codigo' and dir == 'asc' else 'asc' }}" class="sort-link {% if orden == 'codigo' %}sort-active{% endif %}">Código {% if orden == 'codigo' %}{{ '↑' if dir == 'asc' else '↓' }}{% else %}↕{% endif %}</a></th>
+                <th><a href="/inventario?orden=nombre&dir={{ 'desc' if orden == 'nombre' and dir == 'asc' else 'asc' }}" class="sort-link {% if orden == 'nombre' %}sort-active{% endif %}">Nombre {% if orden == 'nombre' %}{{ '↑' if dir == 'asc' else '↓' }}{% else %}↕{% endif %}</a></th>
+                <th><a href="/inventario?orden=talla&dir={{ 'desc' if orden == 'talla' and dir == 'asc' else 'asc' }}" class="sort-link {% if orden == 'talla' %}sort-active{% endif %}">Talla {% if orden == 'talla' %}{{ '↑' if dir == 'asc' else '↓' }}{% else %}↕{% endif %}</a></th>
+                <th><a href="/inventario?orden=color&dir={{ 'desc' if orden == 'color' and dir == 'asc' else 'asc' }}" class="sort-link {% if orden == 'color' %}sort-active{% endif %}">Color {% if orden == 'color' %}{{ '↑' if dir == 'asc' else '↓' }}{% else %}↕{% endif %}</a></th>
+                <th><a href="/inventario?orden=stock&dir={{ 'desc' if orden == 'stock' and dir == 'asc' else 'asc' }}" class="sort-link {% if orden == 'stock' %}sort-active{% endif %}">Stock {% if orden == 'stock' %}{{ '↑' if dir == 'asc' else '↓' }}{% else %}↕{% endif %}</a></th>
+                <th><a href="/inventario?orden=precio&dir={{ 'desc' if orden == 'precio' and dir == 'asc' else 'asc' }}" class="sort-link {% if orden == 'precio' %}sort-active{% endif %}">Precio {% if orden == 'precio' %}{{ '↑' if dir == 'asc' else '↓' }}{% else %}↕{% endif %}</a></th>
+                <th>Ubicación</th>
+                <th><a href="/inventario?orden=fecha&dir={{ 'desc' if orden == 'fecha' and dir == 'asc' else 'asc' }}" class="sort-link {% if orden == 'fecha' %}sort-active{% endif %}">Fecha {% if orden == 'fecha' %}{{ '↑' if dir == 'asc' else '↓' }}{% else %}↕{% endif %}</a></th>
+            </tr>
+            {% for p in productos %}
+            <tr>
+                <td>{{ p[0] }}</td>
+                <td>{{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+                <td>{{ p[3] }}</td>
+                <td class="{% if p[4]|int > 5 %}stock-ok{% else %}stock-bajo{% endif %}">{{ p[4] }}</td>
+                <td>Bs {{ p[5] }}</td>
+                <td>{{ p[6] }}</td>
+                <td>{{ p[7] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        function filtrar() {
+            const texto = document.getElementById("buscador").value.toLowerCase();
+            const filas = document.querySelectorAll("#tablaInventario tr:not(:first-child)");
+            filas.forEach(fila => {
+                fila.style.display = fila.textContent.toLowerCase().includes(texto) ? "" : "none";
+            });
+        }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
+</body>
+</html>

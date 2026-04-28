@@ -71,6 +71,11 @@ def crear_db():
     )
     """)
 
+    try:
+        cursor.execute("ALTER TABLE productos ADD COLUMN costo REAL")
+    except:
+        pass
+
     conn.commit()
     conn.close()
 
@@ -133,6 +138,7 @@ def admin():
         stock = request.form["stock"]
         precio = request.form["precio"]
         ubicacion = request.form["ubicacion"]
+        costo = request.form.get("costo") or 0
         fecha = datetime.now().strftime("%d/%m/%Y %H:%M")
         imagen = ""
         if "imagen" in request.files and request.files["imagen"].filename != "":
@@ -142,9 +148,9 @@ def admin():
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute("""
-        INSERT INTO productos (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha))
+        INSERT INTO productos (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha, costo)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, fecha, costo))
         conn.commit()
         conn.close()
     return render_template("admin.html")
@@ -185,6 +191,7 @@ def editar(id):
         stock = request.form["stock"]
         precio = request.form["precio"]
         ubicacion = request.form["ubicacion"]
+        costo = request.form.get("costo") or 0
         imagen = None
         if "imagen" in request.files and request.files["imagen"].filename != "":
             archivo = request.files["imagen"]
@@ -192,14 +199,14 @@ def editar(id):
             imagen = resultado["secure_url"]
         if imagen:
             cursor.execute("""
-            UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s, imagen=%s
+            UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s, imagen=%s, costo=%s
             WHERE id=%s
-            """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, id))
+            """, (codigo, nombre, talla, color, stock, precio, ubicacion, imagen, costo, id))
         else:
             cursor.execute("""
-            UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s
+            UPDATE productos SET codigo=%s, nombre=%s, talla=%s, color=%s, stock=%s, precio=%s, ubicacion=%s, costo=%s
             WHERE id=%s
-            """, (codigo, nombre, talla, color, stock, precio, ubicacion, id))
+            """, (codigo, nombre, talla, color, stock, precio, ubicacion, costo, id))
         conn.commit()
         conn.close()
         return redirect("/admin/lista")

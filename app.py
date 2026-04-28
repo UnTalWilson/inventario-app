@@ -1,19 +1,34 @@
 from flask import Flask, render_template, request, redirect, session
+import os
 import psycopg2
 from datetime import datetime
 import cloudinary
 import cloudinary.uploader
 
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
 cloudinary.config(
-    cloud_name = "dwgbi7glk",
-    api_key = "844949396175941",
-    api_secret = "GQOSypE5teK1ZtXxokPOxP39ZVo"
+    
+    cloud_name = os.environ.get("CLOUD_NAME"),
+    api_key = os.environ.get("API_KEY"),
+    api_secret = os.environ.get("API_SECRET")
 )
+if not DATABASE_URL:
+    raise ValueError("Falta DATABASE_URL")
 
+if not os.environ.get("CLOUD_NAME"):
+    raise ValueError("Falta CLOUD_NAME")
+if not os.environ.get("API_KEY"):
+    raise ValueError("Falta API_KEY")
+
+if not os.environ.get("API_SECRET"):
+    raise ValueError("Falta API_SECRET")
 app = Flask(__name__)
-app.secret_key = "12345"
+SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("Falta SECRET_KEY")
 
-DATABASE_URL = "postgresql://inventario_db_i3fa_user:IOv3pW8g4v5NtGDSny4Z7cTl4RIfl2PL@dpg-d7n9hhf7f7vs73fl3r40-a/inventario_db_i3fa"
+app.secret_key = SECRET_KEY
 
 def get_conn():
     return psycopg2.connect(DATABASE_URL)

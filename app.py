@@ -48,14 +48,6 @@ def crear_db():
     conn = get_conn()
     cursor = conn.cursor()
 
-    from werkzeug.security import generate_password_hash
-
-    admin_pass = generate_password_hash("Admin#2026_Seguro!")
-    vendedor_pass = generate_password_hash("Vendedor#2026!")
-
-    cursor.execute("UPDATE usuarios SET password=%s WHERE usuario='admin'", (admin_pass,))
-    cursor.execute("UPDATE usuarios SET password=%s WHERE usuario='vendedor'", (vendedor_pass,))
-
     # PRODUCTOS
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS productos (
@@ -72,8 +64,6 @@ def crear_db():
     )
     """)
 
-    cursor.execute("DROP TABLE IF EXISTS usuarios")
-
     # USUARIOS
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS usuarios (
@@ -84,10 +74,11 @@ def crear_db():
     )
     """)
 
-    # CREAR USUARIOS SEGUROS
-    admin_pass = generate_password_hash("1234")
-    vendedor_pass = generate_password_hash("1234")
+    # CONTRASEÑAS SEGURAS
+    admin_pass = generate_password_hash("Admin#2026_Seguro!")
+    vendedor_pass = generate_password_hash("Vendedor#2026!")
 
+    # INSERTAR SI NO EXISTEN
     cursor.execute("""
     INSERT INTO usuarios (usuario, password, rol)
     VALUES (%s, %s, %s)
@@ -114,7 +105,7 @@ def crear_db():
     )
     """)
 
-    # COLUMNA EXTRA
+    # COLUMNA COSTO
     try:
         cursor.execute("ALTER TABLE productos ADD COLUMN costo REAL")
     except:

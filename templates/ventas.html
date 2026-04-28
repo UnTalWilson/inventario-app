@@ -3,58 +3,50 @@
 <head>
     <title>Registrar Venta</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial; background: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 30px 15px; }
-        .header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; margin-bottom: 25px; }
-        .header h2 { font-size: 20px; color: #222; }
-        .header a { font-size: 14px; color: #888; text-decoration: none; }
-        .card { background: white; border-radius: 15px; padding: 25px; width: 100%; max-width: 400px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        input { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 12px; outline: none; }
-        input:focus { border-color: #222; }
-        button { width: 100%; padding: 14px; font-size: 16px; border: none; border-radius: 10px; cursor: pointer; color: white; margin-bottom: 8px; }
-        .btn-buscar { background: #222; }
-        .btn-vender { background: #27ae60; }
-        .fila { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 15px; }
-        .fila:last-child { border-bottom: none; }
-        .label { color: #888; }
-        .valor { font-weight: bold; color: #222; }
-        .mensaje-ok { background: #e6ffe6; color: green; padding: 15px; border-radius: 10px; text-align: center; width: 100%; max-width: 400px; }
-        .mensaje-error { background: #ffe6e6; color: red; padding: 15px; border-radius: 10px; text-align: center; width: 100%; max-width: 400px; }
-    </style>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="header">
-        <h2>💰 Registrar venta</h2>
-        <a href="/inicio">← Volver</a>
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/inicio" style="color:#aaa; font-size:14px; text-decoration:none;">← Inicio</a>
     </div>
 
     {% if mensaje %}
-        <div class="{% if '✅' in mensaje %}mensaje-ok{% else %}mensaje-error{% endif %}">
-            {{ mensaje }}
-        </div>
+    <div class="{% if '✅' in mensaje %}msg-ok{% else %}msg-error{% endif %}" style="max-width:500px; margin:0 auto 15px;">
+        {{ mensaje }}
+    </div>
     {% endif %}
 
-    <div class="card">
+    <div class="card card-red">
+        <h3>💰 Registrar venta</h3>
         <form method="POST">
             <input type="text" name="codigo" placeholder="Código del producto" value="{{ request.form.get('codigo', '') }}">
-            <button type="submit" name="accion" value="buscar" class="btn-buscar">🔍 Buscar</button>
+            <button type="submit" name="accion" value="buscar" class="btn btn-cyan">🔍 Buscar</button>
         </form>
     </div>
 
     {% if producto %}
-    <div class="card">
+    <div class="card card-red">
         <div class="fila"><span class="label">Producto</span><span class="valor">{{ producto[0] }}</span></div>
         <div class="fila"><span class="label">Stock disponible</span><span class="valor">{{ producto[1] }}</span></div>
         <div class="fila"><span class="label">Precio</span><span class="valor">Bs {{ producto[2] }}</span></div>
-
         <form method="POST" style="margin-top:15px;">
             <input type="hidden" name="codigo" value="{{ request.form.get('codigo') }}">
             <input type="number" name="cantidad" placeholder="Cantidad a vender" min="1" max="{{ producto[1] }}" required>
-            <button type="submit" name="accion" value="vender" class="btn-vender">✅ Confirmar venta</button>
+            <button type="submit" name="accion" value="vender" class="btn btn-red">✅ Confirmar venta</button>
         </form>
     </div>
     {% endif %}
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
 </body>
 </html>

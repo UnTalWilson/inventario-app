@@ -2,56 +2,37 @@
 <html>
 <head>
     <title>Inventario</title>
-    <link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#00d4ff">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#222222">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
-</script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial; background: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 30px 15px; }
-        .logo { font-size: 24px; font-weight: bold; color: #222; margin-bottom: 25px; letter-spacing: 1px; }
-        .card { background: white; border-radius: 15px; padding: 25px; width: 100%; max-width: 400px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input { width: 100%; padding: 14px; font-size: 16px; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 12px; outline: none; }
-        input:focus { border-color: #222; }
-        button { width: 100%; padding: 14px; font-size: 16px; background: #222; color: white; border: none; border-radius: 10px; cursor: pointer; }
-        button:active { background: #444; }
-        .resultado { margin-top: 20px; background: white; border-radius: 15px; padding: 25px; width: 100%; max-width: 400px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .resultado img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
-        .nombre { font-size: 20px; font-weight: bold; color: #222; margin-bottom: 15px; }
-        .fila { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 15px; }
-        .fila:last-child { border-bottom: none; }
-        .label { color: #888; }
-        .valor { font-weight: bold; color: #222; }
-        .stock-ok { color: green; }
-        .stock-bajo { color: red; }
-        .no-encontrado { color: red; text-align: center; margin-top: 15px; font-size: 16px; }
-    </style>
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="logo">📦 Inventario</div>
-    <div class="card">
+    <div class="header">
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/inicio" style="color:#aaa; font-size:14px; text-decoration:none;">← Inicio</a>
+    </div>
+
+    <div class="card card-cyan">
         <form method="POST">
             <input type="text" name="codigo" placeholder="Buscar por código..." autofocus>
-            <button type="submit">Buscar</button>
+            <button type="submit" class="btn btn-cyan">🔍 Buscar</button>
         </form>
     </div>
 
     {% if producto %}
-    <div class="resultado">
+    <div class="card card-cyan">
         {% if producto[6] %}
-        <img src="{{ producto[6] }}" alt="Imagen">
+        <img src="{{ producto[6] }}" style="width:100%; border-radius:12px; margin-bottom:15px;">
         {% endif %}
-        <div class="nombre">{{ producto[0] }}</div>
+        <div style="font-size:20px; font-weight:bold; color:#1a1a2e; margin-bottom:15px;">{{ producto[0] }}</div>
         <div class="fila"><span class="label">Talla</span><span class="valor">{{ producto[1] }}</span></div>
         <div class="fila"><span class="label">Color</span><span class="valor">{{ producto[2] }}</span></div>
         <div class="fila"><span class="label">Stock</span>
-            <span class="valor {% if producto[3] > 5 %}stock-ok{% else %}stock-bajo{% endif %}">
+            <span class="valor {% if producto[3]|int > 5 %}stock-ok{% else %}stock-bajo{% endif %}">
                 {{ producto[3] }} unidades
             </span>
         </div>
@@ -59,12 +40,13 @@
         <div class="fila"><span class="label">Ubicación</span><span class="valor">{{ producto[5] }}</span></div>
     </div>
     {% elif producto is not none %}
-    <p class="no-encontrado">❌ Producto no encontrado</p>
+    <p class="msg-error" style="max-width:500px; margin:0 auto;">❌ Producto no encontrado</p>
     {% endif %}
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/static/sw.js');
-  }
-</script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
 </body>
 </html>

@@ -3,37 +3,20 @@
 <head>
     <title>Lista de Productos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial; background: #f0f0f0; padding: 20px 15px; }
-        .header { display: flex; justify-content: space-between; align-items: center; max-width: 700px; margin: 0 auto 20px; }
-        .header h2 { font-size: 20px; color: #222; }
-        .links a { font-size: 14px; color: #888; text-decoration: none; margin-left: 15px; }
-        .links a:hover { color: #222; }
-        input[type="text"] { width: 100%; max-width: 700px; display: block; margin: 0 auto 20px; padding: 12px; font-size: 15px; border: 2px solid #ddd; border-radius: 10px; outline: none; }
-        input[type="text"]:focus { border-color: #222; }
-        .tabla { width: 100%; max-width: 700px; margin: 0 auto; background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #222; color: white; padding: 12px; text-align: left; font-size: 14px; }
-        td { padding: 12px; font-size: 14px; border-bottom: 1px solid #f0f0f0; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: #fafafa; }
-        .btn-eliminar { background: #ff4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px; text-decoration: none; }
-        .btn-eliminar:hover { background: #cc0000; }
-        .stock-ok { color: green; font-weight: bold; }
-        .stock-bajo { color: red; font-weight: bold; }
-    </style>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="header">
-        <h2>📋 Lista de productos</h2>
-        <div class="links">
-            <a href="/admin">+ Agregar</a>
-            <a href="/logout">Cerrar sesión</a>
-        </div>
+    <div class="header" style="max-width:700px;">
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/admin" style="color:#aaa; font-size:14px; text-decoration:none;">+ Agregar</a>
     </div>
 
-    <input type="text" id="buscador" placeholder="Filtrar por código o nombre..." onkeyup="filtrar()">
+    <input type="text" class="search-input" id="buscador" placeholder="Filtrar por código o nombre..." onkeyup="filtrar()">
 
     <div class="tabla">
         <table id="tablaProductos">
@@ -43,7 +26,7 @@
                 <th>Talla</th>
                 <th>Color</th>
                 <th>Stock</th>
-                <th>Precio (Bs)</th>
+                <th>Precio</th>
                 <th>Fecha</th>
                 <th></th>
             </tr>
@@ -54,11 +37,11 @@
                 <td>{{ p[3] }}</td>
                 <td>{{ p[4] }}</td>
                 <td class="{% if p[5]|int > 5 %}stock-ok{% else %}stock-bajo{% endif %}">{{ p[5] }}</td>
-                <td>{{ p[6] }}</td>
+                <td>Bs {{ p[6] }}</td>
                 <td>{{ p[7] }}</td>
-                <td style="min-width:180px;">
-                    <a href="/admin/editar/{{ p[0] }}" style="background:#333; color:white; padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none; display:inline-block; margin-bottom:4px;">✏️ Editar</a>
-                    <a href="/admin/eliminar/{{ p[0] }}" class="btn-eliminar" onclick="return confirm('¿Eliminar este producto?')" style="display:inline-block;">🗑 Eliminar</a>
+                <td style="min-width:180px; white-space:nowrap;">
+                    <a href="/admin/editar/{{ p[0] }}" style="background:#1a1a2e; color:white; padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none; margin-right:5px;">✏️ Editar</a>
+                    <a href="/admin/eliminar/{{ p[0] }}" style="background:#e94560; color:white; padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none;" onclick="return confirm('¿Eliminar este producto?')">🗑 Eliminar</a>
                 </td>
             </tr>
             {% endfor %}
@@ -70,9 +53,11 @@
             const texto = document.getElementById("buscador").value.toLowerCase();
             const filas = document.querySelectorAll("#tablaProductos tr:not(:first-child)");
             filas.forEach(fila => {
-                const contenido = fila.textContent.toLowerCase();
-                fila.style.display = contenido.includes(texto) ? "" : "none";
+                fila.style.display = fila.textContent.toLowerCase().includes(texto) ? "" : "none";
             });
+        }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
         }
     </script>
 </body>

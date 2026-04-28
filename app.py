@@ -50,11 +50,11 @@ def crear_db():
 
     from werkzeug.security import generate_password_hash
 
-admin_pass = generate_password_hash("Admin#2026_Seguro!")
-vendedor_pass = generate_password_hash("Vendedor#2026!")
+    admin_pass = generate_password_hash("Admin#2026_Seguro!")
+    vendedor_pass = generate_password_hash("Vendedor#2026!")
 
-cursor.execute("UPDATE usuarios SET password=%s WHERE usuario='admin'", (admin_pass,))
-cursor.execute("UPDATE usuarios SET password=%s WHERE usuario='vendedor'", (vendedor_pass,))
+    cursor.execute("UPDATE usuarios SET password=%s WHERE usuario='admin'", (admin_pass,))
+    cursor.execute("UPDATE usuarios SET password=%s WHERE usuario='vendedor'", (vendedor_pass,))
 
     # PRODUCTOS
     cursor.execute("""

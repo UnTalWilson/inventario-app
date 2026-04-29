@@ -82,13 +82,15 @@ def crear_db():
     cursor.execute("""
     INSERT INTO usuarios (usuario, password, rol)
     VALUES (%s, %s, %s)
-    ON CONFLICT (usuario) DO NOTHING
+    ON CONFLICT (usuario) DO UPDATE 
+    SET password = EXCLUDED.password
     """, ("admin", admin_pass, "admin"))
 
     cursor.execute("""
     INSERT INTO usuarios (usuario, password, rol)
     VALUES (%s, %s, %s)
-    ON CONFLICT (usuario) DO NOTHING
+    ON CONFLICT (usuario) DO UPDATE 
+    SET password = EXCLUDED.password
     """, ("vendedor", vendedor_pass, "vendedor"))
 
     # VENTAS

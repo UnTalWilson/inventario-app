@@ -75,8 +75,8 @@ def crear_db():
     """)
 
     # CONTRASEÑAS SEGURAS
-    admin_pass = generate_password_hash("Admin#2026_Seguro!")
-    vendedor_pass = generate_password_hash("Vendedor#2026!")
+    admin_pass = generate_password_hash("untalWilson123")
+    vendedor_pass = generate_password_hash("untalWilson")
 
     # INSERTAR SI NO EXISTEN
     cursor.execute("""

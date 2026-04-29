@@ -48,6 +48,8 @@ def crear_db():
     conn = get_conn()
     cursor = conn.cursor()
 
+    # BORRAR USUARIOS (TEMPORAL)
+    cursor.execute("DELETE FROM usuarios")
     # PRODUCTOS
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS productos (

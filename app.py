@@ -159,6 +159,13 @@ def login():
 
         conn.close()
 
+        # 🔍 DEBUG (TEMPORAL)
+        print("USER DB:", user)
+        print("PASSWORD INGRESADA:", password)
+
+        if user:
+            print("HASH CHECK:", check_password_hash(user[0], password))
+
         if user and check_password_hash(user[0], password):
             session["usuario"] = usuario
             session["rol"] = user[1]

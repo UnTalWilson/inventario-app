@@ -74,9 +74,6 @@ def crear_db():
     )
     """)
 
-    # 🔥 BORRAR TODO
-    cursor.execute("DELETE FROM usuarios")
-
     # CONTRASEÑAS SEGURAS
     admin_pass = "scrypt:32768:8:1$S0daClHHd72sjhK8$0b932200e36ea1b14a44665ea9f023d3b3a624fe64d1e9e4326fe5ad64fd624cab082e8214bceb15209dc206104f65d75389e1e64f2956d6fc08be45806ecb57"
     vendedor_pass = "scrypt:32768:8:1$jt46nyqcerb9gCw1$0bf09a0ec3adcedadbc9c9ccd26c02ab19b84021c79d5ad87f43d69f8d3406d2b2388de64523d78df2db4e9d67f549a7c01e384310fdc17f50c081b28a21248e"

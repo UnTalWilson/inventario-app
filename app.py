@@ -44,6 +44,31 @@ app.secret_key = SECRET_KEY
 def get_conn():
     return psycopg2.connect(DATABASE_URL)
 
+@app.route("/reset")
+def reset():
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM usuarios")
+
+    admin_pass = generate_password_hash("untalWilson123")
+    vendedor_pass = generate_password_hash("untalWilson")
+
+    cursor.execute("""
+    INSERT INTO usuarios (usuario, password, rol)
+    VALUES (%s, %s, %s)
+    """, ("admin", admin_pass, "admin"))
+
+    cursor.execute("""
+    INSERT INTO usuarios (usuario, password, rol)
+    VALUES (%s, %s, %s)
+    """, ("vendedor", vendedor_pass, "vendedor"))
+
+    conn.commit()
+    conn.close()
+
+    return "Usuarios reiniciados"
+
 def crear_db():
     conn = get_conn()
     cursor = conn.cursor()

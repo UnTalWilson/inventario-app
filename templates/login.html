@@ -16,7 +16,11 @@
         <h3 style="text-align:center; font-size:18px; margin-bottom:20px;">Iniciar sesión</h3>
         <form method="POST">
             <input type="text" name="usuario" placeholder="Usuario" required>
-            <input type="password" name="password" placeholder="Contraseña" required>
+
+            <input type="password" id="password" name="password" placeholder="Contraseña" required>
+
+            <button type="button" onclick="togglePassword()">👁 Ver</button>
+
             <button type="submit" class="btn btn-cyan">Entrar</button>
         </form>
         {% if error %}
@@ -27,6 +31,17 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/static/sw.js');
         }
+    </script>
+    <script>
+    function togglePassword() {
+        const input = document.getElementById("password");
+
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    }
     </script>
 </body>
 </html>

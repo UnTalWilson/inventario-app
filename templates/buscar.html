@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header">
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/inicio" style="color:#aaa; font-size:14px; text-decoration:none;">← Inicio</a>
+    </div>
+
+    <div class="card card-cyan">
+        <form method="POST">
+            <input type="text" name="codigo" placeholder="Buscar por código..." autofocus>
+            <button type="submit" class="btn btn-cyan">🔍 Buscar</button>
+            <a href="/inventario" class="btn btn-dark" style="margin-top:8px;">📦 Ver inventario completo</a>
+        </form>
+    </div>
+
+    {% if producto %}
+    <div class="card card-cyan">
+        {% if producto[6] %}
+        <img src="{{ producto[6] }}" style="width:100%; border-radius:12px; margin-bottom:15px;">
+        {% endif %}
+        <div style="font-size:20px; font-weight:bold; color:#1a1a2e; margin-bottom:15px;">{{ producto[0] }}</div>
+        <div class="fila"><span class="label">Talla</span><span class="valor">{{ producto[1] }}</span></div>
+        <div class="fila"><span class="label">Color</span><span class="valor">{{ producto[2] }}</span></div>
+        <div class="fila"><span class="label">Stock</span>
+            <span class="valor {% if producto[3]|int > 5 %}stock-ok{% else %}stock-bajo{% endif %}">
+                {{ producto[3] }} unidades
+            </span>
+        </div>
+        <div class="fila"><span class="label">Precio</span><span class="valor">Bs {{ producto[4] }}</span></div>
+        <div class="fila"><span class="label">Ubicación</span><span class="valor">{{ producto[5] }}</span></div>
+    </div>
+    {% elif producto is not none %}
+    <p class="msg-error" style="max-width:500px; margin:0 auto;">❌ Producto no encontrado</p>
+    {% endif %}
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
+</body>
+</html>

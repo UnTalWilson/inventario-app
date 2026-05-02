@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agregar Producto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header">
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/inicio" style="color:#aaa; font-size:14px; text-decoration:none;">← Inicio</a>
+    </div>
+
+    <div class="card card-orange">
+        <h3>🛒 Agregar producto</h3>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="text" name="codigo" placeholder="Código *" required>
+            <input type="text" name="nombre" placeholder="Nombre *" required>
+            <input type="text" name="talla" placeholder="Talla">
+            <input type="text" name="color" placeholder="Color">
+            <input type="number" name="stock" placeholder="Stock">
+            <input type="number" name="precio" placeholder="Precio (Bs)" step="0.01">
+            <input type="number" name="costo" placeholder="Costo (Bs) — solo admin" step="0.01">
+            <input type="text" name="ubicacion" placeholder="Ubicación en estante">
+            <input type="file" name="imagen" accept="image/*">
+            <button type="submit" class="btn btn-orange">✅ Guardar producto</button>
+        </form>
+        <a href="/admin/lista" class="btn btn-outline" style="margin-top:10px;">📋 Ver lista de productos</a>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
+</body>
+</html>

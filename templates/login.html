@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="center-page">
+    <div class="logo" style="margin-bottom:30px;">
+        <img src="/static/icon.svg">
+        <div class="logo-text">Stock<span>Pro</span></div>
+    </div>
+    <div class="card card-cyan" style="max-width:380px;">
+        <h3 style="text-align:center; font-size:18px; margin-bottom:20px;">Iniciar sesión</h3>
+        <form method="POST">
+            <input type="text" name="usuario" placeholder="Usuario" required>
+
+            <input type="password" id="password" name="password" placeholder="Contraseña" required>
+
+            <button type="button" onclick="togglePassword()">👁 Ver</button>
+
+            <button type="submit" class="btn btn-cyan">Entrar</button>
+        </form>
+        {% if error %}
+        <p class="msg-error">{{ error }}</p>
+        {% endif %}
+    </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
+    <script>
+    function togglePassword() {
+        const input = document.getElementById("password");
+
+        if (input.type === "password") {
+            input.type = "text";
+        } else {
+            input.type = "password";
+        }
+    }
+    </script>
+</body>
+</html>

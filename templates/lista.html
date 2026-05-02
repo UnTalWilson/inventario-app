@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Productos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header" style="max-width:700px;">
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/admin" style="color:#aaa; font-size:14px; text-decoration:none;">+ Agregar</a>
+    </div>
+
+    <input type="text" class="search-input" id="buscador" placeholder="Filtrar por código o nombre..." onkeyup="filtrar()">
+
+    <div class="tabla">
+        <table id="tablaProductos">
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Talla</th>
+                <th>Color</th>
+                <th>Stock</th>
+                <th>Precio</th>
+                <th>Fecha</th>
+                <th></th>
+            </tr>
+            {% for p in productos %}
+            <tr>
+                <td>{{ p[1] }}</td>
+                <td>{{ p[2] }}</td>
+                <td>{{ p[3] }}</td>
+                <td>{{ p[4] }}</td>
+                <td class="{% if p[5]|int > 5 %}stock-ok{% else %}stock-bajo{% endif %}">{{ p[5] }}</td>
+                <td>Bs {{ p[6] }}</td>
+                <td>{{ p[7] }}</td>
+                <td style="min-width:180px; white-space:nowrap;">
+                    <a href="/admin/editar/{{ p[0] }}" style="background:#1a1a2e; color:white; padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none; margin-right:5px;">✏️ Editar</a>
+                    <a href="/admin/eliminar/{{ p[0] }}" style="background:#e94560; color:white; padding:6px 12px; border-radius:6px; font-size:13px; text-decoration:none;" onclick="return confirm('¿Eliminar este producto?')">🗑 Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <script>
+        function filtrar() {
+            const texto = document.getElementById("buscador").value.toLowerCase();
+            const filas = document.querySelectorAll("#tablaProductos tr:not(:first-child)");
+            filas.forEach(fila => {
+                fila.style.display = fila.textContent.toLowerCase().includes(texto) ? "" : "none";
+            });
+        }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
+</body>
+</html>

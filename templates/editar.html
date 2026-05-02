@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar Producto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header">
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/admin/lista" style="color:#aaa; font-size:14px; text-decoration:none;">← Lista</a>
+    </div>
+
+    <div class="card card-orange">
+        <h3>✏️ Editar producto</h3>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="text" name="codigo" value="{{ producto[1] }}" placeholder="Código">
+            <input type="text" name="nombre" value="{{ producto[2] }}" placeholder="Nombre">
+            <input type="text" name="talla" value="{{ producto[3] }}" placeholder="Talla">
+            <input type="text" name="color" value="{{ producto[4] }}" placeholder="Color">
+            <input type="number" name="stock" value="{{ producto[5] }}" placeholder="Stock">
+            <input type="number" name="precio" value="{{ producto[6] }}" placeholder="Precio (Bs)" step="0.01">
+            <input type="text" name="ubicacion" value="{{ producto[7] }}" placeholder="Ubicación">
+            {% if producto[8] %}
+            <div style="margin-bottom:12px;">
+                <img src="{{ producto[8] }}" style="width:100%; border-radius:12px; margin-bottom:8px;">
+                <small style="color:#aaa;">Imagen actual — sube una nueva para cambiarla</small>
+            </div>
+            {% endif %}
+            <input type="file" name="imagen" accept="image/*">
+            <button type="submit" class="btn btn-orange">✅ Guardar cambios</button>
+        </form>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
+</body>
+</html>

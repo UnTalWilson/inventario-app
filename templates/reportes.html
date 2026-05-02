@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reportes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="header">
+        <a href="/inicio" class="logo">
+            <img src="/static/icon.svg">
+            <div class="logo-text">Stock<span>Pro</span></div>
+        </a>
+        <a href="/inicio" style="color:#aaa; font-size:14px; text-decoration:none;">← Inicio</a>
+    </div>
+
+    <div class="card card-purple" style="max-width:700px;">
+        <h3>📅 Resumen de hoy</h3>
+        <div style="display:flex; gap:15px; flex-wrap:wrap; margin-top:10px;">
+            <div style="background:#f8f8f8; border-radius:12px; padding:15px; flex:1; min-width:100px; text-align:center;">
+                <div style="font-size:28px; font-weight:bold; color:#1a1a2e;">{{ resumen_hoy[0] or 0 }}</div>
+                <div style="font-size:12px; color:#aaa; margin-top:5px;">Ventas</div>
+            </div>
+            <div style="background:#f8f8f8; border-radius:12px; padding:15px; flex:1; min-width:100px; text-align:center;">
+                <div style="font-size:28px; font-weight:bold; color:#1a1a2e;">{{ resumen_hoy[1] or 0 }}</div>
+                <div style="font-size:12px; color:#aaa; margin-top:5px;">Unidades</div>
+            </div>
+            <div style="background:#f8f8f8; border-radius:12px; padding:15px; flex:1; min-width:100px; text-align:center;">
+                <div style="font-size:28px; font-weight:bold; color:#00a884;">Bs {{ "%.0f"|format(resumen_hoy[2] or 0) }}</div>
+                <div style="font-size:12px; color:#aaa; margin-top:5px;">Total</div>
+            </div>
+        </div>
+    </div>
+
+    {% if stock_bajo %}
+    <div class="card card-red" style="max-width:700px;">
+        <h3>⚠️ Stock bajo</h3>
+        <div class="tabla" style="margin-top:10px;">
+            <table>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Stock</th>
+                </tr>
+                {% for p in stock_bajo %}
+                <tr>
+                    <td>{{ p[0] }}</td>
+                    <td>{{ p[1] }}</td>
+                    <td class="stock-bajo">{{ p[2] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card card-cyan" style="max-width:700px;">
+        <h3>🧾 Últimas ventas</h3>
+        {% if ventas %}
+        <div class="tabla" style="margin-top:10px;">
+            <table>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cant.</th>
+                    <th>Total</th>
+                    <th>Vendedor</th>
+                    <th>Fecha</th>
+                </tr>
+                {% for v in ventas %}
+                <tr>
+                    <td>{{ v[0] }}</td>
+                    <td>{{ v[1] }}</td>
+                    <td>Bs {{ "%.0f"|format(v[3]) }}</td>
+                    <td>{{ v[4] }}</td>
+                    <td>{{ v[5] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% else %}
+        <p style="text-align:center; color:#aaa; padding:20px;">No hay ventas registradas</p>
+        {% endif %}
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/sw.js');
+        }
+    </script>
+</body>
+</html>
